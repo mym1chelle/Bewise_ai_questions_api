@@ -20,7 +20,7 @@ class QuestionManager:
         self.session = session
 
 
-async def get_question(question_id: int, session: AsyncSession):
+async def is_question_exist(question_id: int, session: AsyncSession):
     query = select(Question).where(Question.question_id == question_id)
     result = await session.execute(query)
     question = result.scalars().first()
@@ -29,7 +29,7 @@ async def get_question(question_id: int, session: AsyncSession):
     return False
 
 
-async def search_question(
+async def get_unique_questions(
         session: AsyncSession,
         question_count: int = 1
 ):
@@ -38,11 +38,11 @@ async def search_question(
         questions_response = await get_response(count=question_count - len(unique_questions))
         for question in questions_response:
             question_id = question.get('id')
-            question_is_exist = await get_question(
+            exist = await is_question_exist(
                 question_id=question_id,
                 session=session
             )
-            if not question_is_exist:
+            if not exist:
                 question_data = {
                     'question_id': question.get('id'),
                     'question_text': question.get('question'),
@@ -64,3 +64,7 @@ async def add_new_question(question_count, session: AsyncSession):
         session.add(new_question)
     await session.commit()
     return 1
+
+
+async def get_last_saved_question():
+    pass

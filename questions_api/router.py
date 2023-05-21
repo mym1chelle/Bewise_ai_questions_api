@@ -35,6 +35,7 @@ async def add_question(
         session: AsyncSession = Depends(get_async_session)
 ):
     """Добавление карточки"""
+    
     data = count.dict()
     question_count = data['questions_num']
     question = await add_new_question(
