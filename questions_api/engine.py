@@ -1,7 +1,7 @@
 import aiohttp
 import os
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
+from sqlalchemy import select, desc
 from questions_api.models import Question
 from dateutil.parser import parse
 
@@ -48,7 +48,7 @@ async def get_unique_questions(
     return unique_questions
 
 
-async def add_new_question(question_count, session: AsyncSession):
+async def save_missing_questions(question_count, session: AsyncSession):
     questions = await get_unique_questions(
         question_count=question_count,
         session=session
@@ -59,5 +59,9 @@ async def add_new_question(question_count, session: AsyncSession):
     await session.commit()
 
 
-async def get_last_saved_question():
-    pass
+async def get_last_saved_question(session: AsyncSession):
+    query = select(Question).order_by(Question.added.desc())
+    result = (await session.execute(query)).scalars().first()
+    if result:
+        return result
+    return {}
