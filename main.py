@@ -5,7 +5,7 @@ from questions_api.router import router as router_users
 app = FastAPI(
     debug=True,
     title='Bewise.ai v.1',
-    description='API для тестового задания Bewise.ai'
+    description='API добавления и вывода вопросов'
 )
 
 app.include_router(

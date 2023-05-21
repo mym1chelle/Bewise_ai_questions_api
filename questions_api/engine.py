@@ -1,13 +1,16 @@
 import aiohttp
-import os
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select, desc
+from sqlalchemy import select
 from questions_api.models import Question
 from dateutil.parser import parse
+from data.config import load_config
+
+
+config = load_config(".env")
 
 
 async def get_response(count: int = 1):
-    sevice = os.getenv('QUESTION_URL')
+    sevice = config.service.base_url
     url = f'{sevice}count={count}'
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
@@ -30,7 +33,9 @@ async def get_unique_questions(
 ):
     unique_questions = []
     while len(unique_questions) < question_count:
-        questions_response = await get_response(count=question_count - len(unique_questions))
+        questions_response = await get_response(
+            count=question_count - len(unique_questions)
+        )
         for question in questions_response:
             question_id = question.get('id')
             exist = await is_question_exist(

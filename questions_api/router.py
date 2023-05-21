@@ -1,26 +1,21 @@
-from fastapi import APIRouter, Depends, HTTPException
-from dateutil.parser import parse
-from dotenv import load_dotenv
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from data.db import get_async_session
-from questions_api.schemas import AddQuestionModel
+from typing import List
+from questions_api.schemas import AddQuestionModel, QuestionReturnsModel
 from questions_api.models import Question
 from questions_api.engine import (
     save_missing_questions,
     get_last_saved_question
 )
-# from questions_api.schemas
-
-load_dotenv()
 
 router = APIRouter(
-    prefix='/cards',
-    tags=['Cards']
+    tags=['Questions']
 )
 
 
-@router.get('/questions')
+@router.get('/questions', response_model=List[QuestionReturnsModel])
 async def get_questions(
         limit: int = 15,
         offset: int = 0,
@@ -32,12 +27,12 @@ async def get_questions(
     return result.scalars().all()
 
 
-@router.post('/questions')
+@router.post('/questions', response_model=QuestionReturnsModel)
 async def add_question(
         count: AddQuestionModel,
         session: AsyncSession = Depends(get_async_session)
 ):
-    """Добавление карточки"""
+    """Добавление вопросов"""
     last = await get_last_saved_question(session=session)
     data = count.dict()
     question_count = data['questions_num']
