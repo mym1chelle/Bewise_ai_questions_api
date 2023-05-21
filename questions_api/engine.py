@@ -15,11 +15,6 @@ async def get_response(count: int = 1):
             return await response.json()
 
 
-class QuestionManager:
-    def __init__(self, session):
-        self.session = session
-
-
 async def is_question_exist(question_id: int, session: AsyncSession):
     query = select(Question).where(Question.question_id == question_id)
     result = await session.execute(query)
@@ -54,16 +49,14 @@ async def get_unique_questions(
 
 
 async def add_new_question(question_count, session: AsyncSession):
-    questions = await search_question(
+    questions = await get_unique_questions(
         question_count=question_count,
         session=session
     )
-    print('END', len(questions))
     for question in questions:
         new_question = Question(**question)
         session.add(new_question)
     await session.commit()
-    return 1
 
 
 async def get_last_saved_question():
