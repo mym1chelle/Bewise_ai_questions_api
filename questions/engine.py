@@ -1,7 +1,7 @@
 import aiohttp
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
-from questions_api.models import Question
+from questions.models import Question
 from dateutil.parser import parse
 from data.config import load_config
 

@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 
-from questions_api.router import router as router_users
+from questions.router import router as router_users
 
 app = FastAPI(
     debug=True,

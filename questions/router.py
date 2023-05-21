@@ -3,9 +3,9 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from data.db import get_async_session
 from typing import List
-from questions_api.schemas import AddQuestionModel, QuestionReturnsModel
-from questions_api.models import Question
-from questions_api.engine import (
+from questions.schemas import AddQuestionModel, QuestionReturnsModel
+from questions.models import Question
+from questions.engine import (
     save_missing_questions,
     get_last_saved_question
 )

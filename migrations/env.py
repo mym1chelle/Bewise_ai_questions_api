@@ -8,7 +8,7 @@ from sqlalchemy.ext.asyncio import AsyncEngine
 
 from alembic import context
 from data.db import SQLALCHEMY_DATABASE_URL
-from questions_api.models import Question
+from questions.models import Question
 
 
 # this is the Alembic Config object, which provides
