@@ -1,4 +1,5 @@
 import aiohttp
+from fastapi import status, HTTPException
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
 from questions.models import Question
@@ -14,8 +15,13 @@ async def get_response(count: int = 1):
     url = f'{sevice}count={count}'
     async with aiohttp.ClientSession() as session:
         async with session.get(url) as response:
-            print(f'get response {count}')
-            return await response.json()
+            if response.status == 200:
+                return await response.json()
+            else:
+                raise HTTPException(
+                    status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                    detail='API service with questions not answered'
+                )
 
 
 async def is_question_exist(question_id: int, session: AsyncSession):
@@ -66,7 +72,4 @@ async def save_missing_questions(question_count, session: AsyncSession):
 
 async def get_last_saved_question(session: AsyncSession):
     query = select(Question).order_by(Question.added.desc())
-    result = (await session.execute(query)).scalars().first()
-    if result:
-        return result
-    return {}
+    return (await session.execute(query)).scalars().first()

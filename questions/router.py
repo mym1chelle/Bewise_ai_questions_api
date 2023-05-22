@@ -15,7 +15,7 @@ router = APIRouter(
 )
 
 
-@router.get('/questions', response_model=List[QuestionReturnsModel])
+@router.get('/questions/', response_model=List[QuestionReturnsModel])
 async def get_questions(
         limit: int = 15,
         offset: int = 0,
@@ -27,17 +27,17 @@ async def get_questions(
     return result.scalars().all()
 
 
-@router.post('/questions', response_model=QuestionReturnsModel)
+@router.post('/questions/')
 async def add_question(
         count: AddQuestionModel,
         session: AsyncSession = Depends(get_async_session)
 ):
     """Добавление вопросов"""
     last = await get_last_saved_question(session=session)
-    data = count.dict()
-    question_count = data['questions_num']
     await save_missing_questions(
-        question_count=question_count,
+        question_count=count.questions_num,
         session=session
     )
-    return last
+    if last:
+        return QuestionReturnsModel(**last.__dict__)
+    return {}

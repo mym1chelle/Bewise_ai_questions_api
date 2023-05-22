@@ -9,7 +9,7 @@ class ExtendedModel(BaseModel):
 
 
 class AddQuestionModel(ExtendedModel):
-    questions_num: int = Field(ge=1)
+    questions_num: int = Field(ge=1, le=100, default=1)
 
 
 class QuestionReturnsModel(ExtendedModel):
